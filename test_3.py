@@ -172,10 +172,17 @@ plt.figure(figsize=(10, 6))
 plt.scatter(X1[0], X1[1], color='purple', label='Class 0 (X1)')
 # Строим точки второго класса
 plt.scatter(X2[0], X2[1], color='violet', label='Class 1 (X2)')
-plot_decision_boundary()  # Строим границу принятия решения
-plt.title('Logistic regression')  # Устанавливаем заголовок графика
-plt.xlabel('X values')  # Устанавливаем подпись для оси X
-plt.ylabel('Y values')  # Устанавливаем подпись для оси Y
-plt.legend()  # Показываем легенду
-plt.grid()  # Включаем сетку
-plt.show()  # Отображаем график
+# Строим границу принятия решения
+plot_decision_boundary()
+# Устанавливаем заголовок графика
+plt.title('Logistic regression')
+# Устанавливаем подпись для оси X
+plt.xlabel('X values')
+# Устанавливаем подпись для оси Y
+plt.ylabel('Y values')
+# Показываем легенду
+plt.legend()
+# Включаем сетку
+plt.grid()
+# Отображаем график
+plt.show()
