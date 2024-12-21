@@ -18,88 +18,146 @@ X2 = [
 ]
 
 # Объединяем данные
-inputs = [(X1[0][i], X1[1][i]) for i in range(len(X1[0]))]  # Создаем список входных данных для класса 0
-targets = [0 for _ in range(len(X1[0]))]  # Создаем список целевых значений для класса 0
-inputs += [(X2[0][i], X2[1][i]) for i in range(len(X2[0]))]  # Добавляем входные данные для класса 1
-targets += [1 for _ in range(len(X2[0]))]  # Добавляем целевые значения для класса 1
+# Создаем список входных данных для класса 0
+inputs = [(X1[0][i], X1[1][i]) for i in range(len(X1[0]))]
+# Создаем список целевых значений для класса 0
+targets = [0 for _ in range(len(X1[0]))] 
+# Добавляем входные данные для класса 1
+inputs += [(X2[0][i], X2[1][i]) for i in range(len(X2[0]))] 
+ # Добавляем целевые значения для класса 1
+targets += [1 for _ in range(len(X2[0]))]
 
-weights = [randint(-100, 100) / 100 for _ in range(3)]  # Инициализируем веса случайными значениями
+# Инициализируем веса случайными значениями
+weights = [randint(-100, 100) / 100 for _ in range(3)]  
 
-def weighted_z(point):  # Функция для вычисления взвешенной суммы
-    z = [item * weights[i] for i, item in enumerate(point)]  # Умножаем каждую координату на соответствующий вес
-    return sum(z) + weights[-1]  # Возвращаем сумму и добавляем смещение (bias)
+# Функция для вычисления взвешенной суммы
+def weighted_z(point):  
+  # Умножаем каждую координату на соответствующий вес
+    z = [item * weights[i] for i, item in enumerate(point)]
+  # Возвращаем сумму и добавляем смещение (bias)
+    return sum(z) + weights[-1]
 
-def logistic_function(z):  # Логистическая функция
-    return 1 / (1 + e ** (-z))  # Возвращаем значение логистической функции
+ # Логистическая функция
+def logistic_function(z):
+  # Возвращаем значение логистической функции
+    return 1 / (1 + e ** (-z))  
 
-def logistic_error():  # Функция для вычисления ошибки логистической регрессии
-    errors = []  # Список для хранения ошибок
-    for i, point in enumerate(inputs):  # Проходим по всем входным данным
-        z = weighted_z(point)  # Вычисляем взвешенную сумму
-        output = logistic_function(z)  # Получаем выходное значение
-        target = targets[i]  # Получаем целевое значение
+# Функция для вычисления ошибки логистической регрессии
+def logistic_error():
+ # Список для хранения ошибок
+    errors = []
+ # Проходим по всем входным данным
+    for i, point in enumerate(inputs): 
+     # Вычисляем взвешенную сумму
+        z = weighted_z(point)
+      # Получаем выходное значение
+        output = logistic_function(z)
+       # Получаем целевое значение
+        target = targets[i]  
 
-        if output == 1:  # Если выход равен 1, заменяем его на 0.99999 для избежания логарифма нуля
+     # Если выход равен 1, заменяем его на 0.99999 для избежания логарифма нуля
+        if output == 1:  
             output = 0.99999
-        if output == 0:  # Если выход равен 0, заменяем его на 0.00001
+         # Если выход равен 0, заменяем его на 0.00001
+        if output == 0:  
             output = 0.00001
 
-        error = -(target * log(output, e) - (1 - target) * log(1 - output, e))  # Вычисляем ошибку
-        errors.append(error)  # Добавляем ошибку в список
+     # Вычисляем ошибку
+        error = -(target * log(output, e) - (1 - target) * log(1 - output, e)) 
+     # Добавляем ошибку в список
+        errors.append(error) 
 
-    return sum(errors) / len(errors)  # Возвращаем среднюю ошибку
+ # Возвращаем среднюю ошибку
+    return sum(errors) / len(errors)
 
 # Гиперпараметры
-lr = 0.1  # Скорость обучения
-num_epochs = 100  # Количество эпох
+# Ввели значение скорости обучения
+lr = 0.1 
+# Ввели значение количество эпох
+num_epochs = 100 
 
 # Обучение модели
-for epoch in range(num_epochs):  # Проходим по всем эпохам
-    for i, point in enumerate(inputs):  # Проходим по всем входным данным
-        z = weighted_z(point)  # Вычисляем взвешенную сумму
-        output = logistic_function(z)  # Получаем выходное значение
-        target = targets[i]  # Получаем целевое значение
+# Проходим по всем эпохам
+for epoch in range(num_epochs):  
+  # Проходим по всем входным данным
+    for i, point in enumerate(inputs):
+     # Вычисляем взвешенную сумму
+        z = weighted_z(point)
+     # Получаем выходное значение
+        output = logistic_function(z)
+     # Получаем целевое значение
+        target = targets[i]
 
-        for j in range(len(weights) - 1):  # Обновляем веса для входных данных
-            weights[j] -= lr * point[j] * (output - target) * (1 / len(inputs))  # Обновляем вес
+      # Обновляем веса для входных данных
+        for j in range(len(weights) - 1):
+         # Обновляем вес
+            weights[j] -= lr * point[j] * (output - target) * (1 / len(inputs))
 
-        weights[-1] -= lr * (output - target) * (1 / len(inputs))  # Обновляем смещение (bias)
+      # Обновляем смещение (bias)
+        weights[-1] -= lr * (output - target) * (1 / len(inputs))
 
     # Вывод значений epoch, error, x1, x2, bias, output и target
-    error = logistic_error()  # Вычисляем ошибку
+  # Вычисляем ошибку
+    error = logistic_error()
     print(f"epoch: {epoch}, error: {error}, x1: {inputs[i][0]}, x2: {inputs[i][1]}, bias: {weights[-1]}, output: {round(output, 2)}, target: {target}")  # Выводим информацию об эпохе
+  # Выводим финальные веса
+print(weights) 
 
-print(weights)  # Выводим финальные веса
+# Функция для вычисления точности модели
+def accuracy():
+  # Счетчик правильных ответов
+    true_outputs = 0 
+ # Проходим по всем входным данным
+    for i, point in enumerate(inputs):
+     # Вычисляем взвешенную сумму
+        z = weighted_z(point)
+     # Получаем выходное значение
+        output = logistic_function(z)
+     # Получаем целевое значение
+        target = targets[i]
 
-def accuracy():  # Функция для вычисления точности модели
-    true_outputs = 0  # Счетчик правильных ответов
-    for i, point in enumerate(inputs):  # Проходим по всем входным данным
-        z = weighted_z(point)  # Вычисляем взвешенную сумму
-        output = logistic_function(z)  # Получаем выходное значение
-        target = targets[i]  # Получаем целевое значение
+      # Если округленное выходное значение совпадает с целевым
+        if round(output) == target:
+          # Увеличиваем счетчик правильных ответов
+            true_outputs += 1 
 
-        if round(output) == target:  # Если округленное выходное значение совпадает с целевым
-            true_outputs += 1  # Увеличиваем счетчик правильных ответов
+ # Возвращаем количество правильных ответов и общее количество данных
+    return true_outputs, len(inputs)
 
-    return true_outputs, len(inputs)  # Возвращаем количество правильных ответов и общее количество данных
-
-def test():  # Функция для тестирования модели
-    for i, point in enumerate(inputs):  # Проходим по всем входным данным
-        z = weighted_z(point)  # Вычисляем взвешенную сумму
-        output = logistic_function(z)  # Получаем выходное значение
-        target = targets[i]  # Получаем целевое значение
-        print(f"output: {round(output, 2)}, target: {target}")  # Выводим выходное значение и целевое значение
-
-test()  # Запускаем тестирование
-print("accuracy:", accuracy())  # Выводим точность модели
+# Функция для тестирования модели
+def test(): 
+ # Проходим по всем входным данным
+    for i, point in enumerate(inputs):
+     # Вычисляем взвешенную сумму
+        z = weighted_z(point)
+      # Получаем выходное значение
+        output = logistic_function(z)
+     # Получаем целевое значение
+        target = targets[i]
+     # Выводим выходное значение и целевое значение
+        print(f"output: {round(output, 2)}, target: {target}") 
+     
+# Запускаем тестирование
+test() 
+ # Выводим точность модели
+print("accuracy:", accuracy())
 
 # Графическая интерпретация
-plt.figure(figsize=(10, 6))  # Устанавливаем размер графика
-plt.scatter(X1[0], X1[1], color='purple', label='Class 0 (X1)')  # Отображаем точки первого класса
-plt.scatter(X2[0], X2[1], color='violet', label='Class 1 (X2)')  # Отображаем точки второго класса
-plt.title('Logistic regression')  # Заголовок графика
-plt.xlabel('X values')  # Подпись оси X
-plt.ylabel('Y values')  # Подпись оси Y
-plt.legend()  # Отображаем легенду
-plt.grid()  # Включаем сетку
-plt.show()  # Показываем график
+# Устанавливаем размер графика
+plt.figure(figsize=(10, 6))
+ # Отображаем точки первого класса
+plt.scatter(X1[0], X1[1], color='purple', label='Class 0 (X1)') 
+ # Отображаем точки второго класса
+plt.scatter(X2[0], X2[1], color='violet', label='Class 1 (X2)')
+# Заголовок графика
+plt.title('Logistic regression')
+# Подпись оси X
+plt.xlabel('X values')
+# Подпись оси Y
+plt.ylabel('Y values')
+# Отображаем легенду
+plt.legend()
+# Включаем сетку
+plt.grid() 
+# Показываем график
+plt.show()
